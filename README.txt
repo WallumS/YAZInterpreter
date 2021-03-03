@@ -53,6 +53,14 @@ SET X 0
 LOOP 5 "SET X /ADD 'X' _IT/" (X becomes 0, then 1, then 3, then 6, then 10)
 PRINT 'X' -> 10
 
+CHANGELOG 0.0.1:
+started to use arrays (sorry)
+
+CHANGELOG 0.1.0
+added support for loading the environment manually, added EXIT
+
+CHANGELOG 1.0.0
+added the exit command outside of the environment
 
 CHANGELOG 1.0.1:
 added ADD, SUB, MUL, DIV
