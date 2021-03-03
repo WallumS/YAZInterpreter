@@ -15,8 +15,12 @@ import java.util.Scanner;
 //the console program
 public class main {
 
-    static final String evironmentInit = "YAZ 2.0.1 language; interpreter version 2.2\nRead README.TXT for more info";
-    static final String yazInit = "Willem Swierstra\nYAZ 2.0.0 language\nRead README.TXT for more info\n"
+    static final String evironmentInit = "YAZ 2.0.1 language; interpreter version 2.2\n"
+    + "Read README.TXT for more info";
+    static final String yazInit = "\n"
+    + "Willem Swierstra\n"
+    + "YAZ 2.0.0 language\n"
+    + "Read README.TXT for more info\n"
     + "\n"
     + "run - runs a program that outputs to a file\n" 
     + "ex: \"run test.yzy text.txt\", \"run factorial.yzy here\"\n"
