@@ -10,7 +10,7 @@ enum errorValues {
     sucess, incorrectNumberOfArguments, notFOrC, notACommand, CouldNotParse
 }
 
-//this bit is very, very janky, but essentially i wanted it to return a string and also 
+//this bit is very, very janky, but essentially i wanted it to return a string and also return the value from the operation
 class returnValues {
     errorValues ev;
     String returnString;
@@ -147,7 +147,7 @@ public class interpreter {
         for (int i = 0; i < tempSplit.length; i++) {
             if (tempSplit[i].startsWith("'")){
                 tempSplit[i] = vars.get(tempSplit[i].replace("'", ""));
-            }
+            }   
         }
         return Arrays.copyOfRange(tempSplit, 1, tempSplit.length); //this removes the command from the string array by copying it from the second index to the full length
     }
@@ -291,8 +291,13 @@ public class interpreter {
     static returnValues LOOP(String[] args, PrintStream p, HashMap<String, String> vars){
         if(args.length < 2) return new returnValues(errorValues.incorrectNumberOfArguments, "");
         String[] cmds = Arrays.copyOfRange(args, 1, args.length);
-
-        for (int i = 0; i < Integer.parseInt(args[0]); i++){
+        int it;
+        try {
+            it = Integer.parseInt(args[0]);
+        } catch(Exception e){
+            return new returnValues(errorValues.CouldNotParse, "");
+        }
+        for (int i = 0; i < it; i++){
             for (int ln = 0; ln < cmds.length; ln++){
                 String cmd = cmds[ln].replace("_IT", Integer.toString(i)).replace("\"", "").replace("/", "\"");
                 interpLine(cmd, 0, "internal - loop - iteration: " + i, p, vars);

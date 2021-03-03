@@ -53,6 +53,7 @@ SET X 0
 LOOP 5 "SET X /ADD 'X' _IT/" (X becomes 0, then 1, then 3, then 6, then 10)
 PRINT 'X' -> 10
 
+3/2/2021
 CHANGELOG 0.0.1:
 started to use arrays (sorry)
 
@@ -76,3 +77,11 @@ added LOOP, _IT
 
 CHANGELOG 2.0.0:
 fixed bugs, added comments in ()
+
+3/3/2021
+CHANGELOG 2.0.1
+added more error checking, also fixed/added error checking in the non-environment
+
+future possible improvements:
+[ ] add arguments with _IN
+[ ] compiler? idk how to write assembly yet so idk

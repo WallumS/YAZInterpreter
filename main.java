@@ -1,5 +1,6 @@
 /*
 Willem Swierstra
+3/2/2021 - 3/3/2021
 
 Yazwhatever interpreter
 
@@ -14,7 +15,7 @@ import java.util.Scanner;
 
 //the console program
 public class main {
-
+    //idk if this is the best way to do it but idk where else to put these
     static final String evironmentInit = "YAZ 2.0.1 language; interpreter version 2.2\n"
     + "Read README.TXT for more info";
     static final String yazInit = "\n"
@@ -44,7 +45,8 @@ public class main {
             switch (in.input[0].toLowerCase()) {
                 case "run": // runs a file to output to another file
                     if (in.input.length != 3) {
-                        System.out.println("ERROR! incorrect number of arguments!");
+                        System.out.println("ERROR! incorrect number of arguments! please include the program and output files!");
+                        continue;
                     }
                     System.out.println("Interpreting " + in.input[1] + "...");
                     interpreter.Interpret(in.input[1], in.input[2]);
@@ -55,6 +57,10 @@ public class main {
                     interpreter.OpenEnvironment(in);
                     break;
                 case "read":
+                    if (in.input.length != 2) {
+                        System.out.println("ERROR! incorrect number of arguments! please specify the file to view!");
+                        continue;
+                    }
                     ReadFileToConsole(in.input[1]);
                     break;
                 default:
