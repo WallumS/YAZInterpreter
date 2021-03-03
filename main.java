@@ -11,12 +11,13 @@ I added to the language a whole lot, check the README.txt
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.Scanner;
 
 //the console program
 public class main {
     //idk if this is the best way to do it but idk where else to put these
-    static final String evironmentInit = "YAZ 2.0.1 language; interpreter version 2.2\n"
+    static final String evironmentInit = "YAZ 2.0.3 language; interpreter version 2.2\n"
     + "Read README.TXT for more info";
     static final String yazInit = "\n"
     + "Willem Swierstra\n"
@@ -44,17 +45,17 @@ public class main {
             // switches on the "command", or the first input given
             switch (in.input[0].toLowerCase()) {
                 case "run": // runs a file to output to another file
-                    if (in.input.length != 3) {
+                    if (in.input.length < 3) {
                         System.out.println("ERROR! incorrect number of arguments! please include the program and output files!");
                         continue;
                     }
                     System.out.println("Interpreting " + in.input[1] + "...");
-                    interpreter.Interpret(in.input[1], in.input[2]);
+                    interpreter.Interpret(in.input[1], in.input[2], Arrays.asList(in.input).subList(3, in.input.length));
                     System.out.println("done! check " + in.input[2] + " for the executed program");
                     break;
                 case "yaz": // opens the yaz command environment
                     System.out.println(evironmentInit);
-                    interpreter.OpenEnvironment(in);
+                    interpreter.OpenEnvironment(in, Arrays.asList(in.input).subList(1, in.input.length));
                     break;
                 case "read":
                     if (in.input.length != 2) {

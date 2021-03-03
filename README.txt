@@ -82,6 +82,12 @@ fixed bugs, added comments in ()
 CHANGELOG 2.0.1
 added more error checking, also fixed/added error checking in the non-environment
 
+CHANGELOG 2.0.2
+added _IN arguments to get input from console
+
+CHANGELOG 2.0.3
+added error checking for _IN arguments
+
 future possible improvements:
-[ ] add arguments with _IN
+[X] add arguments with _IN
 [ ] compiler? idk how to write assembly yet so idk

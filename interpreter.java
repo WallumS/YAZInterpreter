@@ -25,7 +25,7 @@ class returnValues {
 public class interpreter {
 
     // the main interpreter class
-    static void Interpret(String filepath, String opfp) {
+    static void Interpret(String filepath, String opfp, List<String>envargs) {
         String[] commands = parseYAGFile(filepath);
         if (commands == null) return;
         File out;
@@ -45,7 +45,7 @@ public class interpreter {
         }
         HashMap<String, String> vars = new HashMap<String, String>();
         for (int i = 0; i < commands.length; i++){
-            interpLine(commands[i], i + 1, "file: " + filepath, p, vars);            
+            interpLine(commands[i], i + 1, "file: " + filepath, p, vars, envargs);            
         }
     }
 
@@ -66,10 +66,10 @@ public class interpreter {
     }
 
     // Takes in a string to parse, parses it, and then sets that output stream to p. uses int line and String environment for error printing
-    static String interpLine(String l, int line, String environment, PrintStream p, HashMap<String, String> vars){
+    static String interpLine(String l, int line, String environment, PrintStream p, HashMap<String, String> vars, List<String> envargs){
         String command = l.split(" ")[0]; 
         //this is such a stupid way of doing it lmao but i didn't want excess variables and there isn't a delete operator in java
-        String[] args = parseArgs(l, vars);
+        String[] args = parseArgs(l, vars, envargs);
         returnValues thisCommand;
             switch(command){
                 case "CONVERT":
@@ -97,13 +97,13 @@ public class interpreter {
                     thisCommand = CONCAT(args, p);
                     break;
                 case "SET":
-                    thisCommand = SET(args, p, vars);
+                    thisCommand = SET(args, p, vars, envargs);
                     break;
                 case "PRINT":
-                    thisCommand = PRINT(args, p, vars);
+                    thisCommand = PRINT(args, p, vars, envargs);
                     break;
                 case "LOOP":
-                    thisCommand = LOOP(args, p, vars);
+                    thisCommand = LOOP(args, p, vars, envargs);
                     break;
                 default:
                     thisCommand = new returnValues(errorValues.notACommand, "");
@@ -128,26 +128,35 @@ public class interpreter {
     }
 
     // this runs a python like command interface in the console
-    public static void OpenEnvironment(InputBuffer s){
+    public static void OpenEnvironment(InputBuffer s, List<String>envargs){
         String h = "";
         int i = 1;
         HashMap<String, String> vars = new HashMap<String, String>();
         while(true){
             h = s.nextInpFull();
             if (h.contains("EXIT")) break;
-            interpLine(h, i, "command line environment", System.out, vars);
+            interpLine(h, i, "command line environment", System.out, vars, envargs);
             i++;
         }
     }
 
     //this one could be useful outside of here
-    public static String[] parseArgs(String input, HashMap<String, String> vars){
+    public static String[] parseArgs(String input, HashMap<String, String> vars, List<String> envargs){
         //this is quite possibly the dumbest way to do it, but essentially its a regex string that i managed to figure out eventually
         String[] tempSplit = input.replaceAll("\\s*\\([^\\)]*\\)\\s*", "").split(" (?=([^\"]*\"[^\"]*\")*[^\"]*$)");
         for (int i = 0; i < tempSplit.length; i++) {
             if (tempSplit[i].startsWith("'")){
-                tempSplit[i] = vars.get(tempSplit[i].replace("'", ""));
-            }   
+                tempSplit[i] = vars.get(tempSplit[i].replace("'", "")); //very janky
+            }
+            else if (tempSplit[i].startsWith("_IN")){
+                int in = Integer.parseInt(tempSplit[i].replace("_IN", ""));
+                try{
+                    tempSplit[i] = envargs.get(in); //even janker
+                }
+                catch (Exception e){
+                    System.out.println("ERROR! There is no argument " + in + "!");
+                }
+            }
         }
         return Arrays.copyOfRange(tempSplit, 1, tempSplit.length); //this removes the command from the string array by copying it from the second index to the full length
     }
@@ -266,29 +275,29 @@ public class interpreter {
     }
 
     //sets a variable
-    static returnValues SET(String[] args, PrintStream p, HashMap<String, String> vars){
+    static returnValues SET(String[] args, PrintStream p, HashMap<String, String> vars, List<String> envargs){
         if(args.length != 2) return new returnValues(errorValues.incorrectNumberOfArguments, "");
         String output = args[1];
         if(args[1].startsWith("\"")){
-            output = interpLine(args[1].replace("\"", ""), 0, "internal", null, vars);
+            output = interpLine(args[1].replace("\"", ""), 0, "internal", null, vars, envargs);
         }
         vars.put(args[0], output);
         return new returnValues(errorValues.sucess, "");
     }
 
     //prints a value
-    static returnValues PRINT(String[] args, PrintStream p, HashMap<String, String> vars){
+    static returnValues PRINT(String[] args, PrintStream p, HashMap<String, String> vars, List<String> envargs){
         if(args.length != 1) return new returnValues(errorValues.incorrectNumberOfArguments, "");
         String output = args[0];
         if(args[0].startsWith("\"")){
-            output = interpLine(args[0].replace("\"", ""), 0, "internal", null, vars);
+            output = interpLine(args[0].replace("\"", ""), 0, "internal", null, vars, envargs);
         }
         p.println(output);
         return new returnValues(errorValues.sucess, output);
     }
 
     //loops over an amount
-    static returnValues LOOP(String[] args, PrintStream p, HashMap<String, String> vars){
+    static returnValues LOOP(String[] args, PrintStream p, HashMap<String, String> vars, List<String> envargs){
         if(args.length < 2) return new returnValues(errorValues.incorrectNumberOfArguments, "");
         String[] cmds = Arrays.copyOfRange(args, 1, args.length);
         int it;
@@ -300,7 +309,7 @@ public class interpreter {
         for (int i = 0; i < it; i++){
             for (int ln = 0; ln < cmds.length; ln++){
                 String cmd = cmds[ln].replace("_IT", Integer.toString(i)).replace("\"", "").replace("/", "\"");
-                interpLine(cmd, 0, "internal - loop - iteration: " + i, p, vars);
+                interpLine(cmd, 0, "internal - loop - iteration: " + i, p, vars, envargs);
             }
         }
         return new returnValues(errorValues.sucess, "");
