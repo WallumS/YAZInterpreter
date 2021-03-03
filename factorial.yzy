@@ -1,0 +1,4 @@
+SET factor 5 (this is what you edit to get a factorial out of)
+SET X 1
+LOOP 'factor' "SET Y /ADD _IT 1/" "SET X /MUL 'X' 'Y'/"
+PRINT 'X'
